@@ -14,7 +14,7 @@ import color from './widget/color';
 import TabBarItem from './widget/TabBarItem';
 import Time from '../reduxTest4/index';
 import Webview from './widget/Webview';
-
+import ReadingDetail from './screen/ReadingDetail';
 
 class index extends PureComponent{
 
@@ -107,7 +107,8 @@ const Tab = TabNavigator({
 const Navigator = StackNavigator({
     Tab:{screen:Tab},
     Time:{screen:Time},
-    Webview:{screen:Webview}
+    Webview:{screen:Webview},
+    ReadingDetail:{screen:ReadingDetail}
 },{
     navigationOptions: {
         headerStyle: { backgroundColor: color.theme},
