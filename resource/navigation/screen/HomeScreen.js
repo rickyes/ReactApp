@@ -3,24 +3,68 @@
  */
 import React,{ PureComponent } from 'react';
 import {
+    Image,
     View,
     Text,
     StyleSheet,
-    TouchableOpacity
+    InteractionManager
 } from 'react-native';
+import ViewPager from 'react-native-viewpager';
 
 export default class HomeScreen extends PureComponent{
 
+    constructor(props){
+        super(props);
+        var musicDataSource = new ViewPager.DataSource({
+            pageHasChanged:(p1,p2)=>p1!==p2
+        });
+        this.state = {
+            musicList:musicDataSource.cloneWithPages([]),
+            visiblePageIndex:0
+        }
+    }
+
+    componentDidMount(){
+        InteractionManager.runAfterInteractions(()=>{
+            this.fetchMusicList();
+        });
+    }
+
+    fetchMusicList(){
+        fetch("http://v3.wufazhuce.com:8000/api/music/idlist/0")
+            .then((response)=>response.json())
+            .then((jsonResponse)=>{
+                var musics = jsonResponse['data'];
+                this.setState({
+                    musicList:this.state.musicList.cloneWithPages(musics)
+                });
+            }).catch((error)=>{
+                if(error instanceof SyntaxError){
+                    console.log(error);
+                }
+        });
+    }
+
     render(){
-        const { navigate } = this.props.navigation;
         return (
-            <View style={styles.container}>
-                <Text>HomeScreen</Text>
-                <TouchableOpacity
-                    style={styles.btn}
-                    onPress={()=>navigate('Time')}>
-                    <Text style={{color:'white',fontSize:20}}>Redux计时器</Text>
-                </TouchableOpacity>
+            <View style={{flex:1,flexDirection:'column',overflow:'hidden'}}>
+                <ViewPager
+                    style={styles.row}
+                    dataSource={this.state.musicList}
+                    renderPage={(data,pageId)=>
+                        <View style={{flex:1}}>
+
+                        </View>
+                    }
+                    onChangePage={(pageNumber)=>{
+                        this.setState({
+                            visiblePageIndex:pageNumber
+                        });
+                    }}
+                    renderPageIndicator={()=>(<View style={{width:0,height:0}}></View>)}
+                    isLoop={false}
+                    autoPlay={false}
+                />
             </View>
         );
     }
@@ -28,18 +72,8 @@ export default class HomeScreen extends PureComponent{
 }
 
 const styles = StyleSheet.create({
-    container:{
-        justifyContent:'center',
-        alignItems:'center',
-        flex:1
-    },
-    btn:{
-        justifyContent:'center',
-        alignItems:'center',
-        marginTop:20,
-        backgroundColor:'#35b998',
-        width:200,
-        height:50,
-        borderRadius:10
+    row:{
+        flex:1,
+        flexDirection:'row'
     }
 });
