@@ -10,6 +10,7 @@ import {
     InteractionManager
 } from 'react-native';
 import ViewPager from 'react-native-viewpager';
+import OneMusicCell from './OneMusicCell'
 
 export default class HomeScreen extends PureComponent{
 
@@ -53,7 +54,8 @@ export default class HomeScreen extends PureComponent{
                     dataSource={this.state.musicList}
                     renderPage={(data,pageId)=>
                         <View style={{flex:1}}>
-
+                            <OneMusicCell id={data} index={pageId}
+                                          visiblePageIndex={this.state.visiblePageIndex}/>
                         </View>
                     }
                     onChangePage={(pageNumber)=>{

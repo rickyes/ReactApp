@@ -47,7 +47,7 @@ export default class ReadingDetail extends PureComponent{
     }
 
     render() {
-        const content = this.state.essay;
+        const content = this.state.essay.replace(/<br>/g," ");
         return (
             <ScrollView style={styles.container}>
                 <Text style={{fontSize: 17, marginBottom: 10, alignItems: 'center'}}>{this.state.title}</Text>
