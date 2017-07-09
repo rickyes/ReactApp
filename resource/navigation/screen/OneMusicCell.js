@@ -9,7 +9,8 @@ import {
     InteractionManager,
     ScrollView,
     TouchableHighlight,
-    StyleSheet
+    StyleSheet,
+    ToastAndroid
 } from 'react-native';
 import {DeviceWidth} from '../Utils/DisplayUtil';
 import * as RNFS from 'react-native-fs';
@@ -66,6 +67,7 @@ export default class OneMusicCell extends PureComponent{
                 palyStatus:MusicManager.start,
                 loadProcess:""
             });
+            this.releaseSound();
         }
     }
 
@@ -133,7 +135,10 @@ export default class OneMusicCell extends PureComponent{
                 }]}>{music.story_author.user_name}</Text>
                 <HtmlView
                     value={music.story.replace(/<br>/g, " ")}
-                    style={[styles.content, {fontSize: 11, marginTop: 8}]}
+                    style={{
+                        marginRight: 5,
+                        marginLeft: 5,
+                        marginTop: 8}}
                 />
             </ScrollView>
         );
@@ -141,11 +146,12 @@ export default class OneMusicCell extends PureComponent{
 
     operationMusic(musicId){
         if(this.state.playStatus == MusicManager.playing){
-            this.initSound();
+            this.pauseSound();
         }else{
             if(this.state.loadStatus == loaded){
                 this.playSound();
             }else{
+                console.log('---getMp3UrlAndDownloadFile--'+musicId);
                 this.getMp3UrlAndDownloadFile(musicId);
             }
         }
@@ -165,6 +171,10 @@ export default class OneMusicCell extends PureComponent{
                     this.downFile(false,jsonResponse.location);
                 })
                 .catch((error)=>{
+                    ToastAndroid.show('服务器开小差了。。',ToastAndroid.LONG);
+                    this.setState({
+                        playStatus:MusicManager.start
+                    });
                     if(error instanceof SyntaxError){
                         console.log(error);
                     }
